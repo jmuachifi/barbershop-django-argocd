@@ -1,0 +1,20 @@
+{% extends 'scheduling/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Cancel Appointment</h2>
+    <p>Are you sure you want to cancel the appointment with <strong>{{ appointment.barber.user.username }}</strong> on <strong>{{ appointment.date_time }}</strong>?</p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Cancel</button>
+
+        <!-- Conditional button URL based on user role -->
+        {% if user == appointment.customer %}
+        <a href="{% url 'customer_dashboard' %}" class="btn btn-secondary">No, Go Back</a>
+        {% elif user == appointment.barber %}
+        <a href="{% url 'barber_dashboard' %}" class="btn btn-secondary">No, Go Back</a>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

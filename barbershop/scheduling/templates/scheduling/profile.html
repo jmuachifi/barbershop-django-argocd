@@ -1,0 +1,10 @@
+{% extends 'scheduling/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Your Profile</h1>
+    <p>Welcome, {{ request.user.username }}!</p>
+    <p>Email: {{ request.user.email }}</p>
+    <p>Role: {{ request.user.role }}</p>
+</div>
+{% endblock %}

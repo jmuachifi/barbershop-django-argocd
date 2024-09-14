@@ -1,0 +1,31 @@
+{% extends 'scheduling/base.html' %}
+
+{% block title %}Barber Dashboard - Barbershop{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Welcome Message -->
+    <h2>Welcome, {{ user.username }}!</h2>
+
+    <!-- Appointments Section -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <h3 class="card-title">Your Appointments</h3>
+
+            <ul class="list-group mt-3">
+                {% for appointment in appointments %}
+                <li class="list-group-item">
+                    <strong>Customer:</strong> {{ appointment.customer.username }}<br>
+                    <strong>Date & Time:</strong> {{ appointment.date_time|date:"Y-m-d H:i" }}
+                    <a href="{% url 'cancel_appointment' appointment.id %}" class="btn btn-sm btn-danger mt-2">Cancel</a>
+                    <a href="{% url 'mark_as_completed' appointment.id %}" class="btn btn-sm btn-success mt-2">Mark as Completed</a>
+
+                </li>
+                {% empty %}
+                <p class="text-muted text-center">You have no upcoming appointments.</p>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

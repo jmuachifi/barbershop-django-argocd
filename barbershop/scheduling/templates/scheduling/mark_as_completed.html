@@ -1,0 +1,17 @@
+{% extends 'scheduling/base.html' %}
+
+{% block title %}Mark Appointment as Completed{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Mark Appointment as Completed</h2>
+    <p>Are you sure you want to mark the appointment with <strong>{{ appointment.customer.username }}</strong> on <strong>{{ appointment.date_time }}</strong> as completed?</p>
+
+    <!-- Form for marking as completed -->
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Yes, Mark as Completed</button>
+        <a href="{% url 'barber_dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

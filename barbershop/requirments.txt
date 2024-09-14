@@ -1,0 +1,6 @@
+Django>=5.1.1
+psycopg2>=2.9.3  # PostgreSQL adapter
+gunicorn>=20.1.0  # Production server
+dj-database-url>=0.5.0  # For managing database URL connections
+django-crispy-forms>=2.3  # Crispy forms support
+crispy-bootstrap5>=0.7  # Bootstrap 5 integration for crispy forms

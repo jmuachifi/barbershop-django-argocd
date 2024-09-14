@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: django-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/jmuachifi/barbershop-django-argocd.git'
+    targetRevision: main
+    path: k8s
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argocd-django-app
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

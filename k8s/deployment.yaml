@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app
+spec:
+  replicas: 1 # Only one replica for SQLite (since SQLite doesn't support concurrent writes)
+  selector:
+    matchLabels:
+      app: django-app
+  template:
+    metadata:
+      labels:
+        app: django-app
+    spec:
+      containers:
+      - name: django-app
+        image: jmuachifi/barbershop-django:latest # Image from Docker Hub
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - mountPath: /app/db # Path inside the container where the SQLite file will be stored
+          name: sqlite-storage
+        env:
+        - name: DJANGO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: django-secrets
+              key: DJANGO_SECRET_KEY
+        - name: DJANGO_DEBUG
+          value: "False"
+        - name: DJANGO_ALLOWED_HOSTS
+          value: "localhost,127.0.0.1"
+      volumes:
+      - name: sqlite-storage
+        persistentVolumeClaim:
+          claimName: sqlite-pvc # Persistent Volume Claim for SQLite storage
