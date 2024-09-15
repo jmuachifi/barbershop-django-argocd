@@ -8,4 +8,4 @@ resources:
 
 images:
 - name: jmuachifi/barbershop-django-app # Replace with your image name
-  newTag: 27596f38f4a19ef2438f6cd22a148f3a2224f848
+  newTag: 1299591a44b3703d0b0d4d7ea854d7b8b0d8bb5c
