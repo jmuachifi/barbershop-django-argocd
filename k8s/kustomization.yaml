@@ -8,4 +8,4 @@ resources:
 
 images:
 - name: jmuachifi/barbershop-django-app # Replace with your image name
-  newTag: latest # Will dynamically update this during the pipeline
+  newTag: 27596f38f4a19ef2438f6cd22a148f3a2224f848
