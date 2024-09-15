@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: django-app
-        image: jmuachifi/barbershop-django:latest # Image from Docker Hub
+        image: jmuachifi/barbershop-django-app:latest # Image from Docker Hub
         ports:
         - containerPort: 8000
         volumeMounts:
