@@ -22,6 +22,14 @@ jobs:
       with:
         python-version: '3.12'
 
+    - name: Cache Python dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -40,6 +48,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: code_quality  # Ensure code quality checks run first
+    if: github.event.head_commit.message != '[skip build]' # Skip build if commit message contains '[skip build]'
 
     steps:
     - name: Checkout code
@@ -65,16 +74,22 @@ jobs:
         docker push jmuachifi/barbershop-django-app:latest
         docker push jmuachifi/barbershop-django-app:$GITHUB_SHA
 
+    - name: Save Image Digest to Build Output
+      id: docker_meta
+      run: |
+        echo "image_digest=$(docker inspect --format='{{index .RepoDigests 0}}' jmuachifi/barbershop-django-app:latest)" >> $GITHUB_ENV
+
   # 3. Security Check Stage (after image build)
   security_check:
     runs-on: ubuntu-latest
     needs: build  # Ensure security check runs after the build
+    if: github.event.head_commit.message != '[skip security]'  # Skip security if '[skip security]' is in commit message
 
     steps:
     - name: Install Trivy for Container Security Scanning
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: jmuachifi/barbershop-django-app:latest
+        image-ref: ${{ env.image_digest }}  # Use the built image digest for scanning
 
   # 4. Update kustomization.yaml and Commit Changes
   update_kustomization:
@@ -85,7 +100,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Check if kustomization.yaml needs updating
+      id: check_kustomization
+      run: |
+        old_tag=$(grep "newTag" k8s/kustomization.yaml | awk '{print $2}')
+        if [[ "$old_tag" == "$GITHUB_SHA" ]]; then
+          echo "Image tag already up-to-date"
+          echo "::set-output name=skip::true"
+        else
+          echo "::set-output name=skip::false"
+        fi
+
     - name: Update kustomization.yaml with new image tag
+      if: steps.check_kustomization.outputs.skip != 'true'
       run: |
         git remote set-url origin https://jmuachifi:${{ secrets.GH_PAT }}@github.com/jmuachifi/barbershop-django-argocd.git
         sed -i "s@newTag:.*@newTag: $GITHUB_SHA@g" k8s/kustomization.yaml
@@ -98,6 +125,7 @@ jobs:
   # deploy:
   #   runs-on: ubuntu-latest
   #   needs: update_kustomization
+  #   if: steps.update_kustomization.outputs.skip != 'true'  # Only deploy if image tag was updated
 
   #   steps:
   #   - name: Checkout code
