@@ -56,18 +56,18 @@ jobs:
         git push origin main
 
   # 3. Deploy with ArgoCD
-  deploy:
-    runs-on: ubuntu-latest
-    needs: update_kustomization
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: update_kustomization
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Log in to ArgoCD
-      run: |
-        argocd login ${{ secrets.ARGOCD_SERVER }} --username admin --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
+  #   - name: Log in to ArgoCD
+  #     run: |
+  #       argocd login ${{ secrets.ARGOCD_SERVER }} --username admin --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
 
-    - name: Sync ArgoCD Application
-      run: |
-        argocd app sync django-app
+  #   - name: Sync ArgoCD Application
+  #     run: |
+  #       argocd app sync django-app
